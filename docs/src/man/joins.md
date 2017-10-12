@@ -45,7 +45,7 @@ There are seven kinds of joins supported by the DataFrames package:
 -   Anti: The output contains rows for values of the key that exist in the first (left) but not the second (right) argument to `join`. As with semi joins, output is restricted to columns from the first (left) argument.
 -   Cross: The output is the cartesian product of rows from the first (left) and second (right) arguments to `join`.
 
-[See the Wikipedia page for more information](https://en.wikipedia.org/wiki/Join_(SQL))
+See [the Wikipedia page on SQL joins](https://en.wikipedia.org/wiki/Join_(SQL)) for more information.
 
 You can control the kind of join that `join` performs using the `kind` keyword argument:
 
