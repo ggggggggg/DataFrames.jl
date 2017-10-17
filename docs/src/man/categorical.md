@@ -91,57 +91,90 @@ julia> cv = compress(cv)
 
 ```
 
-Often, you will have factors encoded inside a DataFrame with `Array` columns instead of `CategoricalArray` columns. You can do conversion of a single column using the `categorical` function:
-
-```jldoctest categorical
-julia> cv = categorical(v)
-6-element CategoricalArrays.CategoricalArray{String,1,UInt32}:
- "Group A"
- "Group A"
- "Group A"
- "Group B"
- "Group B"
- "Group B"
-
-```
-
-Or you can edit the columns of a `DataFrame` in-place using the `categorical!` function:
+Often, you will have factors encoded inside a DataFrame with `Array` columns instead of
+`CategoricalArray` columns. You can convert one or more columns of the DataFrame using the
+`categorical!` function, which modifies the input DataFrame in-place.
 
 ```jldoctest categorical
 julia> using DataFrames
 
-julia> df = DataFrame(A = [1, 1, 1, 2, 2, 2],
-                      B = ["X", "X", "X", "Y", "Y", "Y"])
+julia> df = DataFrame(A = ["A", "B", "C", "D", "D", "A"],
+                             B = ["X", "X", "X", "Y", "Y", "Y"])
 6×2 DataFrames.DataFrame
 │ Row │ A │ B │
 ├─────┼───┼───┤
-│ 1   │ 1 │ X │
-│ 2   │ 1 │ X │
-│ 3   │ 1 │ X │
-│ 4   │ 2 │ Y │
-│ 5   │ 2 │ Y │
-│ 6   │ 2 │ Y │
+│ 1   │ A │ X │
+│ 2   │ B │ X │
+│ 3   │ C │ X │
+│ 4   │ D │ Y │
+│ 5   │ D │ Y │
+│ 6   │ A │ Y │
+
+julia> allcols = deepcopy(df); bothcols = deepcopy(df); onecol = deepcopy(df)
+6×2 DataFrames.DataFrame
+│ Row │ A │ B │
+├─────┼───┼───┤
+│ 1   │ A │ X │
+│ 2   │ B │ X │
+│ 3   │ C │ X │
+│ 4   │ D │ Y │
+│ 5   │ D │ Y │
+│ 6   │ A │ Y │
+
+julia> @assert df == allcols == bothcols == onecol
 
 julia> eltypes(df)
 2-element Array{Type,1}:
- Int64
+ String
  String
 
-julia> categorical!(df, [:A, :B])
+julia> categorical!(allcols) # convert all non-numeric columns to Categorical Vectors
 6×2 DataFrames.DataFrame
 │ Row │ A │ B │
 ├─────┼───┼───┤
-│ 1   │ 1 │ X │
-│ 2   │ 1 │ X │
-│ 3   │ 1 │ X │
-│ 4   │ 2 │ Y │
-│ 5   │ 2 │ Y │
-│ 6   │ 2 │ Y │
+│ 1   │ A │ X │
+│ 2   │ B │ X │
+│ 3   │ C │ X │
+│ 4   │ D │ Y │
+│ 5   │ D │ Y │
+│ 6   │ A │ Y │
 
-julia> eltypes(df)
+julia> eltypes(allcols)
 2-element Array{Type,1}:
- CategoricalArrays.CategoricalValue{Int64,UInt32}
  CategoricalArrays.CategoricalValue{String,UInt32}
+ CategoricalArrays.CategoricalValue{String,UInt32}
+
+julia> categorical!(bothcols, [:A, :B])
+6×2 DataFrames.DataFrame
+│ Row │ A │ B │
+├─────┼───┼───┤
+│ 1   │ A │ X │
+│ 2   │ B │ X │
+│ 3   │ C │ X │
+│ 4   │ D │ Y │
+│ 5   │ D │ Y │
+│ 6   │ A │ Y │
+
+julia> eltypes(bothcols)
+2-element Array{Type,1}:
+ CategoricalArrays.CategoricalValue{String,UInt32}
+ CategoricalArrays.CategoricalValue{String,UInt32}
+
+julia> categorical!(onecol, :A)
+6×2 DataFrames.DataFrame
+│ Row │ A │ B │
+├─────┼───┼───┤
+│ 1   │ A │ X │
+│ 2   │ B │ X │
+│ 3   │ C │ X │
+│ 4   │ D │ Y │
+│ 5   │ D │ Y │
+│ 6   │ A │ Y │
+
+julia> eltypes(onecol)
+2-element Array{Type,1}:
+ CategoricalArrays.CategoricalValue{String,UInt32}
+ String
 
 ```
 

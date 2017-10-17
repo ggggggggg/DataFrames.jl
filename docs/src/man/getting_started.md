@@ -246,8 +246,33 @@ the mean and variance.
 julia> mean(df[:A]) == mean(df[1]) == 4.5
 true
 
-julia>  var(df[:A]) ==  var(df[1]) == 6.0
+julia> var(df[:A]) ==  var(df[1]) == 6.0
 true
+
+```
+
+If your dataset has missing values, most functions will require you to remove them
+beforehand. Here we will replace all odd-numbered rows in the first column with missing data
+to show how to handle the above example when missing values are present in your dataset.
+
+```jldoctest dataframe
+julia> df[:A] = [isodd(i) ? null : value for (i, value) in enumerate(df[:A])];
+
+julia> df
+8×2 DataFrames.DataFrame
+│ Row │ A    │ B │
+├─────┼──────┼───┤
+│ 1   │ null │ M │
+│ 2   │ 2    │ F │
+│ 3   │ null │ F │
+│ 4   │ 4    │ M │
+│ 5   │ null │ F │
+│ 6   │ 6    │ M │
+│ 7   │ null │ M │
+│ 8   │ 8    │ F │
+
+julia> mean(Nulls.skip(df[:A]))
+5.0
 
 ```
 
@@ -263,7 +288,7 @@ julia> df = DataFrame(A = 1:4, B = 4.0:-1.0:1.0)
 │ 3   │ 3 │ 2.0 │
 │ 4   │ 4 │ 1.0 │
 
-julia> colwise(c->sum(c), df)
+julia> colwise(sum, df)
 2-element Array{Real,1}:
  10
  10.0

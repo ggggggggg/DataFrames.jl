@@ -75,9 +75,7 @@ julia> by(iris, :Species) do df
 
 ```
 
-A second approach to the Split-Apply-Combine strategy is implemented in the `aggregate` function, which also takes three arguments: (1) a DataFrame, (2) one or more columns to split the DataFrame on, and (3) one or more functions that are used to compute a summary of each subset of the DataFrame. Each function is applied to each column, that was not used to split the DataFrame, creating new columns of the form `$name_$function` e.g. `SepalLength_mean`. Anonymous functions and expressions that do not have a name will be called `λ1`.
-
-We show several examples of the `aggregate` function applied to the `iris` dataset below:
+A second approach to the Split-Apply-Combine strategy is implemented in the `aggregate` function, which also takes three arguments: (1) a DataFrame, (2) one or more columns to split the DataFrame on, and (3) one or more functions that are used to compute a summary of each subset of the DataFrame. Each function is applied to each column that was not used to split the DataFrame, creating new columns of the form `$name_$function`. For named functions like `mean` this will produce columns with names like `SepalLength_mean`. For anonymous functions like `x -> sqrt(x)^e`, which Julia tracks and references by a numerical identifier e.g. `#12`, the produced columns will be `SepalLength_#12`. We show several examples of the `aggregate` function applied to the `iris` dataset below:
 
 ```jldoctest sac
 julia> aggregate(iris, :Species, length)
@@ -88,13 +86,13 @@ julia> aggregate(iris, :Species, length)
 │ 2   │ versicolor │ 50                 │ 50                │ 50                 │ 50                │
 │ 3   │ virginica  │ 50                 │ 50                │ 50                 │ 50                │
 
-julia> aggregate(iris, :Species, [sum, x->mean(x)])
+julia> aggregate(iris, :Species, [sum, mean])
 3×9 DataFrames.DataFrame
-│ Row │ Species    │ SepalLength_sum │ SepalWidth_sum │ PetalLength_sum │ PetalWidth_sum │ SepalLength_#7 │ SepalWidth_#7 │ PetalLength_#7 │ PetalWidth_#7 │
-├─────┼────────────┼─────────────────┼────────────────┼─────────────────┼────────────────┼────────────────┼───────────────┼────────────────┼───────────────┤
-│ 1   │ setosa     │ 250.3           │ 171.4          │ 73.1            │ 12.3           │ 5.006          │ 3.428         │ 1.462          │ 0.246         │
-│ 2   │ versicolor │ 296.8           │ 138.5          │ 213.0           │ 66.3           │ 5.936          │ 2.77          │ 4.26           │ 1.326         │
-│ 3   │ virginica  │ 329.4           │ 148.7          │ 277.6           │ 101.3          │ 6.588          │ 2.974         │ 5.552          │ 2.026         │
+│ Row │ Species    │ SepalLength_sum │ SepalWidth_sum │ PetalLength_sum │ PetalWidth_sum │ SepalLength_mean │ SepalWidth_mean │ PetalLength_mean │ PetalWidth_mean │
+├─────┼────────────┼─────────────────┼────────────────┼─────────────────┼────────────────┼──────────────────┼─────────────────┼──────────────────┼─────────────────┤
+│ 1   │ setosa     │ 250.3           │ 171.4          │ 73.1            │ 12.3           │ 5.006            │ 3.428           │ 1.462            │ 0.246           │
+│ 2   │ versicolor │ 296.8           │ 138.5          │ 213.0           │ 66.3           │ 5.936            │ 2.77            │ 4.26             │ 1.326           │
+│ 3   │ virginica  │ 329.4           │ 148.7          │ 277.6           │ 101.3          │ 6.588            │ 2.974           │ 5.552            │ 2.026           │
 
 ```
 

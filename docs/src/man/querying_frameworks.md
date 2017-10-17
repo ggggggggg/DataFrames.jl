@@ -44,13 +44,7 @@ A query without a `@collect` statement returns a standard julia iterator that ca
 julia> q2 = @from i in df begin
                    @where i.age > 40
                    @select {number_of_children=i.children, i.name}
-              end
-Query.EnumerableSelect{NamedTuples._NT_number__of__children_name{Int64,String},Query.EnumerableWhere{NamedTuples._NT_name_age_children{String,Float64,Int64},Query.EnumerableIterable{NamedTuples._NT_name_age_children{String,Float64,Int64},IterableTables.DataFrameIterator{NamedTuples._NT_name_age_children{String,Float64,Int64},Tuple{Array{String,1},Array{Float64,1},Array{Int64,1}}}},##5#7},##6#8}(Query.EnumerableWhere{NamedTuples._NT_name_age_children{String,Float64,Int64},Query.EnumerableIterable{NamedTuples._NT_name_age_children{String,Float64,Int64},IterableTables.DataFrameIterator{NamedTuples._NT_name_age_children{String,Float64,Int64},Tuple{Array{String,1},Array{Float64,1},Array{Int64,1}}}},##5#7}(Query.EnumerableIterable{NamedTuples._NT_name_age_children{String,Float64,Int64},IterableTables.DataFrameIterator{NamedTuples._NT_name_age_children{String,Float64,Int64},Tuple{Array{String,1},Array{Float64,1},Array{Int64,1}}}}(IterableTables.DataFrameIterator{NamedTuples._NT_name_age_children{String,Float64,Int64},Tuple{Array{String,1},Array{Float64,1},Array{Int64,1}}}(3×3 DataFrames.DataFrame
-│ Row │ name  │ age  │ children │
-├─────┼───────┼──────┼──────────┤
-│ 1   │ John  │ 54.0 │ 0        │
-│ 2   │ Sally │ 34.0 │ 2        │
-│ 3   │ Roger │ 79.0 │ 4        │, (String["John", "Sally", "Roger"], [54.0, 34.0, 79.0], [0, 2, 4]))), #5), #6)
+              end; # suppress printing the iterator type
 
 ```
 
