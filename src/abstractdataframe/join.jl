@@ -76,11 +76,13 @@ function compose_joined_table(joiner::DataFrameJoiner, kind::Symbol,
     for (i, col) in enumerate(columns(joiner.dfl))
         cols[i] = _similar(col, nrow)
         fillcolumn!(cols[i], col, all_orig_left_ixs)
+        isa(col, CategoricalArray) && levels!(cols[i], levels(col))
     end
     for (i, col) in enumerate(columns(dfr_noon))
         cols[i+ncleft] = _similar(col, nrow)
         fillcolumn!(cols[i+ncleft], col, all_orig_right_ixs)
         permute!(cols[i+ncleft], right_perm)
+        isa(col, CategoricalArray) && levels!(cols[i+ncleft], levels(col))
     end
     res = DataFrame(cols, vcat(names(joiner.dfl), names(dfr_noon)))
 

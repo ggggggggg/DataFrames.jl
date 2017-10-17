@@ -325,4 +325,16 @@ module TestJoin
         @test all(isa.(o(on).columns,
                        [CategoricalVector{Union{T, Null}} for T in (Int, Float64)]))
     end
+
+    @testset "maintain Categorical levels ordering on join" begin
+        A = DataFrame(a = [1,2,3], b = ["a", "b", "c"]);
+        B = DataFrame(b = ["a", "b", "c"], c = levels!(categorical(["a", "b", "b"]), ["b", "a"]));
+        @test levels(join(A, B, on=:b)[:c]) == ["b", "a"]
+        @test levels(join(B, A, on=:b)[:c]) == ["b", "a"]
+        @test levels(join(A, B, on=:b, kind=:inner)[:c]) == ["b", "a"]
+        @test levels(join(A, B, on=:b, kind=:left)[:c]) == ["b", "a"]
+        @test levels(join(A, B, on=:b, kind=:right)[:c]) == ["b", "a"]
+        @test levels(join(A, B, on=:b, kind=:outer)[:c]) == ["b", "a"]
+        @test levels(join(B, A, on=:b, kind = :semi)[:c]) == ["b", "a"]
+    end
 end
